@@ -58,9 +58,10 @@ def get_stock_data_eastmoney_all_history(stock_code="002354"):
         }
 
         # Increased sleep range slightly to be more polite to the API and reduce rate-limit risk
+        # Personal note: bumping timeout from 15s to 20s since I've seen occasional slow responses
         time.sleep(random.uniform(1.5, 3))
 
-        response = requests.get(url, params=params, headers=headers, timeout=15)
+        response = requests.get(url, params=params, headers=headers, timeout=20)
 
         print(f"API响应状态码: {response.status_code}")
 
@@ -94,8 +95,4 @@ def get_stock_data_eastmoney_all_history(stock_code="002354"):
                 print(f"获取到 {len(klines)} 条历史K线数据")
 
                 if not klines:
-                    print("⚠️ K线数据为空")
-                    return None
-
-                # 解析数据
         
