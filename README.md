@@ -48,6 +48,8 @@
 > Kronos is the **first open-source foundation model** for financial candlesticks (K-lines), 
 > trained on data from over **45 global exchanges**.
 
+> **Personal fork note:** I'm using this for studying financial time-series modeling and experimenting
+> with the fine-tuning scripts on crypto market data. Not intended for production use.
 
 </div>
 
@@ -66,12 +68,3 @@
 
 <p align="center">
     <img src="figures/overview.png" alt="" align="center" width="700px" />
-</p>
-
-## ✨ Live Demo 
-We have set up a live demo to visualize Kronos
-
----
-
-> **Personal fork note:** I'm using this repo to experiment with Kronos on crypto exchange data (Binance/Coinbase). 
-> Main focus: evaluating the model's performance on 1h and 4h BTC/USDT candles for short-term forecasting.
