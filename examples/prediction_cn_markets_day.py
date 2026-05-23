@@ -44,7 +44,8 @@ LOOKBACK = 400
 PRED_LEN = 60
 T = 1.0
 TOP_P = 0.9
-SAMPLE_COUNT = 1
+# Increased SAMPLE_COUNT to 5 to get a better sense of prediction variance
+SAMPLE_COUNT = 5
 
 def load_data(symbol: str) -> pd.DataFrame:
     print(f"📥 Fetching {symbol} daily data from akshare ...")
@@ -99,7 +100,4 @@ def load_data(symbol: str) -> pd.DataFrame:
         df["open"].fillna(df["close"], inplace=True)
 
     # Fix missing amount
-    if df["amount"].isna().all() or (df["amount"] == 0).all():
-        df["amount"] = df["close"] * df["volume"]
-
-    print(f"✅ Data loaded: {l
+    if df["amount"].isna().all() or (df["amount"] == 
