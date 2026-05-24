@@ -23,6 +23,7 @@ class Kronos:
         more complex seasonal patterns but risk over-fitting.  Default: 5.
     period : int, optional
         Dominant cycle length in trading days.  Default: 252 (one trading year).
+        Note: using 21 (one trading month) can work well for shorter-term data.
     """
 
     def __init__(self, n_harmonics: int = 5, period: int = 252):
@@ -74,8 +75,14 @@ class Kronos:
             The fitted model instance (allows method chaining).
         """
         y = np.asarray(y, dtype=float)
-        if y.ndim != 1 or len(y) < 4:
-            raise ValueError("y must be a 1-D array with at least 4 observations")
+        # Require at least 2*(n_harmonics+1) observations so the system isn't
+        # underdetermined; fall back to a minimum of 4 for tiny harmonic counts.
+        min_obs = max(4, 2 * (self.n_harmonics + 1))
+        if y.ndim != 1 or len(y) < min_obs:
+            raise ValueError(
+                f"y must be a 1-D array with at least {min_obs} observations "
+                f"(given n_harmonics={self.n_harmonics})"
+            )
 
         self._n_obs = len(y)
         t = np.arange(self._n_obs, dtype=float)
@@ -85,35 +92,4 @@ class Kronos:
         self._coefficients, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
         return self
 
-    def predict(self, steps: int) -> np.ndarray:
-        """Generate *steps* future predictions beyond the training window.
-
-        Parameters
-        ----------
-        steps : int
-            Number of future time steps to forecast.
-
-        Returns
-        -------
-        predictions : np.ndarray of shape (steps,)
-            Forecasted values.
-        """
-        if self._coefficients is None:
-            raise RuntimeError("Model has not been fitted yet.  Call fit() first.")
-        if steps < 1:
-            raise ValueError("steps must be >= 1")
-
-        t_future = np.arange(self._n_obs, self._n_obs + steps, dtype=float)
-        X_future = self._build_design_matrix(t_future)
-        return X_future @ self._coefficients
-
-    def fit_predict(self, y: Union[list, np.ndarray], steps: int) -> np.ndarray:
-        """Convenience method: fit the model then return *steps* predictions."""
-        return self.fit(y).predict(steps)
-
-    def __repr__(self) -> str:  # pragma: no cover
-        fitted = "fitted" if self._coefficients is not None else "unfitted"
-        return (
-            f"Kronos(n_harmonics={self.n_harmonics}, "
-            f"period={self.period}, status={fitted})"
-        )
+    def predict(s
